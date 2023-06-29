@@ -22,17 +22,14 @@ app.get('/quote', async (req, res) => {
     // Generate a quote using ChatGPT
     const prompt = `Generate a quote about "${keyword}"`;
 
-    const completion = await openai.createCompletion({
-      model: 'text-davinci-003',
-      prompt: prompt,
-      temperature: 0.7,
-      max_tokens: 50,
-      n: 1,
-      stop: '\n'
+    const completion = await openai.createChatCompletion({
+      model: 'gpt-3.5-turbo',
+      messages: [{ role: 'system', content: prompt }]
     });
-    const quote=completion.data.choices[0].text
+
+    const quote = completion.data.choices[0].message.content;
     console.log(completion.data);
-    res.send(completion.data.choices[0].text)
+    res.send(quote);
   } catch (error) {
     console.error('Error generating quote:', error.message);
     res.status(500).json({ error: 'Failed to generate quote' });
